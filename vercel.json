@@ -2,12 +2,6 @@
   "version": 2,
   "buildCommand": null,
   "outputDirectory": ".",
-  "routes": [
-    { "src": "/script.js", "dest": "/script.js" },
-    { "src": "/styles.css", "dest": "/styles.css" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
-  ],
   "cleanUrls": true,
   "trailingSlash": false,
   "headers": [
@@ -30,4 +24,4 @@
       ]
     }
   ]
-} 
+}
