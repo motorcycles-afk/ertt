@@ -24,10 +24,6 @@ const FAQ: React.FC = () => {
 
   const faqs = [
     {
-      question: "What is included in the free tier?",
-      answer: "Our free tier includes 8GB RAM, 2 CPU cores, 15GB NVMe storage, DDoS protection, Discord support, and 99.9% uptime guarantee. Perfect for development, testing, and small projects."
-    },
-    {
       question: "How do I get started?",
       answer: "Simply join our Discord community to get started with the free tier. For premium plans, visit our control panel to create an account and choose your preferred plan."
     },

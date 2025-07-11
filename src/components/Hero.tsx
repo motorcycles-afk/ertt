@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 import { ArrowRight, Shield, Zap, Globe, Server, Lock, Gauge } from 'lucide-react';
 
-const Hero: React.FC = () => {
+const Hero: React.FC = memo(() => {
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -10,6 +10,8 @@ const Hero: React.FC = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
+            // Unobserve after animation to improve performance
+            observer.unobserve(entry.target);
           }
         });
       },
@@ -228,6 +230,8 @@ const Hero: React.FC = () => {
       </div>
     </div>
   );
-};
+});
+
+Hero.displayName = 'Hero';
 
 export default Hero;

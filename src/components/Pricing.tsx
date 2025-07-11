@@ -1,406 +1,179 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Check, ArrowRight, Zap, Server, Crown } from 'lucide-react';
+import { vpsPlans, vdsPlans, locations } from './plans';
+
+interface Plan {
+  name: string;
+  price: string;
+  period: string;
+  description: string;
+  features: string[];
+  cta: string;
+  href: string;
+  popular: boolean;
+  icon: React.ReactNode;
+  install_fee?: string;
+}
+
+type PlanType = 'vps' | 'vds';
 
 const Pricing: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'kvm' | 'lxc'>('kvm');
+  const [activeTab, setActiveTab] = useState<PlanType>('vps');
+  const [selectedLocation, setSelectedLocation] = useState(locations[0].id);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const elements = document.querySelectorAll('.fade-in-section');
-    elements.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
-  const kvmPlans = [
-    {
-      name: "KVM Starter",
-      price: "$1.50",
-      period: "month",
-      description: "Perfect for small projects and development",
-      features: [
-        "2GB RAM",
-        "1 vCore",
-        "15GB NVMe Storage",
-        "Full KVM Virtualization",
-        "Full Root Access",
-        "Shared IPv4 + NAT IPv6"
-      ],
-      cta: "Order via Discord",
-      href: "https://discord.gg/2YM3eYuZ5m",
-      popular: false,
-      icon: <Server className="w-5 h-5" />
-    },
-    {
-      name: "KVM Standard",
-      price: "$2.50",
-      period: "month",
-      description: "Great for production applications",
-      features: [
-        "4GB RAM",
-        "2 vCores",
-        "25GB NVMe Storage",
-        "Full KVM Virtualization",
-        "Full Root Access",
-        "Shared IPv4 + NAT IPv6"
-      ],
-      cta: "Order via Discord",
-      href: "https://discord.gg/2YM3eYuZ5m",
-      popular: true,
-      icon: <Zap className="w-5 h-5" />
-    },
-    {
-      name: "KVM Pro",
-      price: "$3.50",
-      period: "month",
-      description: "Enhanced performance for demanding workloads",
-      features: [
-        "6GB RAM",
-        "3 vCores",
-        "35GB NVMe Storage",
-        "Full KVM Virtualization",
-        "Full Root Access",
-        "Shared IPv4 + NAT IPv6"
-      ],
-      cta: "Order via Discord",
-      href: "https://discord.gg/2YM3eYuZ5m",
-      popular: false,
-      icon: <Server className="w-5 h-5" />
-    },
-    {
-      name: "KVM Premium",
-      price: "$5.00",
-      period: "month",
-      description: "Maximum performance for enterprise needs",
-      features: [
-        "8GB RAM",
-        "4 vCores",
-        "40GB NVMe Storage",
-        "Full KVM Virtualization",
-        "Full Root Access",
-        "Shared IPv4 + NAT IPv6"
-      ],
-      cta: "Order via Discord",
-      href: "https://discord.gg/2YM3eYuZ5m",
-      popular: false,
-      icon: <Crown className="w-5 h-5" />
+  const currentPlans = useMemo(() => {
+    switch (activeTab) {
+      case 'vps':
+        return vpsPlans;
+      case 'vds':
+        return vdsPlans;
+      default:
+        return [];
     }
-  ];
+  }, [activeTab]);
 
-  const lxcPlans = [
-    {
-      name: "LXC Micro",
-      price: "$0.50",
-      period: "month",
-      description: "Ultra-affordable for lightweight services",
-      features: [
-        "2GB RAM",
-        "1 vCore",
-        "15GB NVMe Storage",
-        "Container Virtualization",
-        "Full Root Access",
-        "Shared IPv4 + NAT IPv6"
-      ],
-      cta: "Order via Discord",
-      href: "https://discord.gg/2YM3eYuZ5m",
-      popular: false,
-      icon: <Server className="w-5 h-5" />
-    },
-    {
-      name: "LXC Standard",
-      price: "$1.00",
-      period: "month",
-      description: "Best value for most applications",
-      features: [
-        "4GB RAM",
-        "2 vCores",
-        "25GB NVMe Storage",
-        "Container Virtualization",
-        "Full Root Access",
-        "Shared IPv4 + NAT IPv6"
-      ],
-      cta: "Order via Discord",
-      href: "https://discord.gg/2YM3eYuZ5m",
-      popular: true,
-      icon: <Zap className="w-5 h-5" />
-    },
-    {
-      name: "LXC Pro",
-      price: "$1.50",
-      period: "month",
-      description: "Enhanced resources for growing projects",
-      features: [
-        "6GB RAM",
-        "3 vCores",
-        "35GB NVMe Storage",
-        "Container Virtualization",
-        "Full Root Access",
-        "Shared IPv4 + NAT IPv6"
-      ],
-      cta: "Order via Discord",
-      href: "https://discord.gg/2YM3eYuZ5m",
-      popular: false,
-      icon: <Server className="w-5 h-5" />
-    },
-    {
-      name: "LXC Premium",
-      price: "$2.00",
-      period: "month",
-      description: "Maximum container performance",
-      features: [
-        "8GB RAM",
-        "4 vCores",
-        "50GB NVMe Storage",
-        "Container Virtualization",
-        "Full Root Access",
-        "Shared IPv4 + NAT IPv6"
-      ],
-      cta: "Order via Discord",
-      href: "https://discord.gg/2YM3eYuZ5m",
-      popular: false,
-      icon: <Crown className="w-5 h-5" />
-    }
-  ];
-
-  const lifetimePlans = [
-    {
-      name: "KVM Lifetime",
-      price: "$5",
-      period: "one-time",
-      description: "Pay once, use forever - incredible value!",
-      features: [
-        "8GB RAM",
-        "4 vCores",
-        "40GB NVMe Storage",
-        "Full KVM Virtualization",
-        "Full Root Access",
-        "Lifetime Access"
-      ],
-      cta: "Order via Discord",
-      href: "https://discord.gg/2YM3eYuZ5m",
-      popular: true,
-      icon: <Crown className="w-5 h-5" />,
-      badge: "🔥 LIFETIME"
-    },
-    {
-      name: "LXC Lifetime",
-      price: "$4",
-      period: "one-time",
-      description: "Ultimate container hosting deal",
-      features: [
-        "12GB RAM",
-        "4 vCores",
-        "100GB NVMe Storage",
-        "Container Virtualization",
-        "Full Root Access",
-        "Lifetime Access"
-      ],
-      cta: "Order via Discord",
-      href: "https://discord.gg/2YM3eYuZ5m",
-      popular: false,
-      icon: <Crown className="w-5 h-5" />,
-      badge: "🔥 LIFETIME"
-    }
-  ];
-
-  const currentPlans = activeTab === 'kvm' ? kvmPlans : lxcPlans;
+  const selectedLocationName = useMemo(() => {
+    return locations.find(loc => loc.id === selectedLocation)?.name || 'Germany';
+  }, [selectedLocation]);
 
   return (
-    <section id="pricing" className="section-padding bg-black">
-      <div className="container mx-auto">
-        {/* Section Header */}
-        <div className="text-center mb-20 fade-in-section">
-          <div className="space-y-6">
-            <h2 className="text-hero">
-              Simple
-              <br />
-              <span className="gradient-text">Pricing</span>
-            </h2>
-            <div className="w-16 h-px bg-white mx-auto"></div>
-            <p className="text-body max-w-2xl mx-auto">
-              Choose between KVM for full virtualization or LXC for better value and performance. 
-              All plans include full root access and friendly support.
-            </p>
-          </div>
-        </div>
+    <section id="pricing" className="py-32 bg-black relative overflow-hidden">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-[0.02]">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+          backgroundSize: '40px 40px'
+        }}></div>
+      </div>
+      
+      <div className="container mx-auto px-8 relative">
+        {/* Header */}
+        <div className="text-center mb-24">
+          <h2 className="text-6xl font-extralight text-white mb-6 tracking-tight">
+            Our Pricing
+         </h2>
+         <div className="w-12 h-px bg-white/20 mx-auto mb-8"></div>
+         <p className="text-xl font-light text-white/60 max-w-2xl mx-auto leading-relaxed">
+           Explore our competitive pricing for VPS and VDS plans. All plans are backed by our robust infrastructure and expert support.
+         </p>
+       </div>
 
-        {/* Plan Type Tabs */}
-        <div className="flex justify-center mb-16 fade-in-section">
-          <div className="pricing-tabs">
-            <button
-              onClick={() => setActiveTab('kvm')}
-              className={`pricing-tab ${activeTab === 'kvm' ? 'pricing-tab-active' : ''}`}
-            >
-              <Server className="w-4 h-4" />
-              KVM Plans
-            </button>
-            <button
-              onClick={() => setActiveTab('lxc')}
-              className={`pricing-tab ${activeTab === 'lxc' ? 'pricing-tab-active' : ''}`}
-            >
-              <Zap className="w-4 h-4" />
-              LXC Plans
-            </button>
-          </div>
-        </div>
+       {/* Discount Banner */}
+       <div className="text-center mb-12 bg-green-500/10 border border-green-500/20 rounded-lg p-4 max-w-2xl mx-auto">
+         <p className="text-green-400 font-semibold">🎉 Special Offer: 20% off on all VPS plans and no setup fees for VDS! 🎉</p>
+       </div>
 
-        {/* Plan Type Description */}
-        <div className="text-center mb-12 fade-in-section">
-          {activeTab === 'kvm' ? (
-            <div className="space-y-3">
-              <h3 className="text-xl font-medium text-white">🔥 KVM Plans</h3>
-              <p className="text-body max-w-3xl mx-auto">
-                Full hardware virtualization with complete isolation. Perfect for running any operating system 
-                and applications that require dedicated resources.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <h3 className="text-xl font-medium text-white">🌱 LXC VPS – More Specs for Less!</h3>
-              <p className="text-body max-w-3xl mx-auto">
-                Container virtualization offering better value and faster performance at lower prices. 
-                Perfect for running lightweight services, testing, websites, bots, and more.
-              </p>
-            </div>
-          )}
-        </div>
+       {/* Location Selector */}
+       <div className="flex justify-center mb-12">
+         <div className="flex items-center space-x-4">
+           <span className="text-white/70">Location:</span>
+           <select
+             value={selectedLocation}
+             onChange={(e) => setSelectedLocation(e.target.value)}
+             className="bg-white/10 border border-white/20 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+           >
+             {locations.map(loc => (
+               <option key={loc.id} value={loc.id} className="bg-black text-white">{loc.name}</option>
+             ))}
+           </select>
+         </div>
+       </div>
 
-        {/* Monthly Plans Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {currentPlans.map((plan, index) => (
-            <div 
-              key={index}
-              className={`pricing-card ${plan.popular ? 'pricing-card-popular' : ''} fade-in-section`}
-              style={{ animationDelay: `${index * 100}ms` }}
+       {/* Tabs */}
+       <div className="flex justify-center mb-20">
+         <div className="flex bg-white/5 backdrop-blur-sm border border-white/10 rounded-full p-1">
+           <button
+             onClick={() => setActiveTab('vps')}
+             className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+               activeTab === 'vps' ? 'bg-white text-black shadow-lg' : 'text-white/70 hover:text-white'
+             }`}
+           >
+             VPS
+           </button>
+           <button
+             onClick={() => setActiveTab('vds')}
+             className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+               activeTab === 'vds' ? 'bg-white text-black shadow-lg' : 'text-white/70 hover:text-white'
+             }`}
+           >
+             VDS
+           </button>
+         </div>
+       </div>
+
+       {/* Plan Type Description */}
+       <div className="text-center mb-16">
+         <div className="space-y-4">
+           <h3 className="text-xl font-medium text-white">
+             {activeTab === 'vps' && 'Virtual Private Server Plans'}
+             {activeTab === 'vds' && 'Virtual Dedicated Server Plans'}
+           </h3>
+           <p className="text-white/60 max-w-3xl mx-auto">
+             {activeTab === 'vps' && 'High-performance virtual servers with flexible configurations.'}
+             {activeTab === 'vds' && 'Get dedicated performance with our high-spec virtual servers, ideal for demanding enterprise applications.'}
+           </p>
+         </div>
+       </div>
+
+       {/* Plans Grid */}
+       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-24">
+         {currentPlans.map((plan: Plan, index: number) => (
+           <div
+             key={`${activeTab}-${plan.name}-${index}`}
+              className={`relative group ${plan.popular ? 'lg:scale-105' : ''}`}
             >
               {plan.popular && (
-                <div className="pricing-card-badge">
-                  Most Popular
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                  <div className="bg-white text-black px-4 py-1 rounded-full text-xs font-semibold">
+                    POPULAR
+                  </div>
                 </div>
               )}
-              
-              <div className="space-y-6">
-                {/* Plan Header */}
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="pricing-card-icon">
-                      {plan.icon}
-                    </div>
-                    <h3 className="text-lg font-medium text-white">{plan.name}</h3>
+
+              <div className={`h-full bg-white/[0.02] backdrop-blur-sm border rounded-2xl p-8 transition-all duration-500 hover:bg-white/[0.04] hover:border-white/20 ${
+                plan.popular ? 'border-white/15 shadow-2xl' : 'border-white/10 hover:shadow-xl'
+              }`}>
+                
+                <div className="text-center mb-8">
+                  <h3 className="text-xl font-medium text-white mb-2">{plan.name}</h3>
+                  <div className="mb-3">
+                    <span className="text-4xl font-extralight text-white">{plan.price}</span>
+                    <span className="text-white/50 text-sm ml-1">/{plan.period}</span>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-baseline space-x-1">
-                      <span className="text-3xl font-light text-white">{plan.price}</span>
-                      <span className="text-sm text-gray-400">/{plan.period}</span>
-                    </div>
-                    <p className="text-sm text-gray-400">{plan.description}</p>
-                  </div>
+                  {activeTab === 'vds' && <p className="text-white/60 text-sm">No setup fee!</p>}
+                  <p className="text-white/60 text-sm">Location: {selectedLocationName}</p>
+                  <p className="text-white/60 text-sm">{plan.description}</p>
                 </div>
 
-                {/* Features List */}
-                <div className="space-y-3">
-                  <ul className="space-y-2">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center space-x-2 text-sm">
-                        <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
-                        <span className="text-gray-300">{feature}</span>
+                {/* Features */}
+                <div className="mb-8">
+                  <ul className="space-y-3">
+                    {plan.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-center text-sm text-white/80">
+                        <Check className="w-4 h-4 text-white/60 mr-3 flex-shrink-0" />
+                        {feature}
                       </li>
                     ))}
                   </ul>
                 </div>
 
                 {/* CTA Button */}
-                <a 
+                <a
                   href={plan.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`${plan.popular ? 'btn-hero-primary' : 'btn-hero-secondary'} w-full text-sm group`}
+                  className={`w-full inline-flex items-center justify-center px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 group/btn ${
+                    plan.popular
+                      ? 'bg-white text-black hover:bg-white/90 shadow-lg hover:shadow-xl'
+                      : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/20'
+                  }`}
                 >
                   {plan.cta}
-                  <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-0.5" />
                 </a>
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Lifetime Plans Section */}
-        <div className="fade-in-section">
-          <div className="text-center mb-12">
-            <h3 className="text-2xl font-medium text-white mb-4">🔥 Lifetime Deals</h3>
-            <p className="text-body max-w-2xl mx-auto">
-              Pay once and enjoy your VPS forever! These exclusive lifetime deals offer incredible value 
-              for long-term projects.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
-            {lifetimePlans.map((plan, index) => (
-              <div 
-                key={index}
-                className="pricing-card pricing-card-lifetime fade-in-section"
-                style={{ animationDelay: `${index * 200}ms` }}
-              >
-                <div className="pricing-card-badge-lifetime">
-                  {plan.badge}
-                </div>
-                
-                <div className="space-y-6">
-                  {/* Plan Header */}
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="pricing-card-icon-lifetime">
-                        {plan.icon}
-                      </div>
-                      <h3 className="text-xl font-medium text-white">{plan.name}</h3>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-baseline space-x-1">
-                        <span className="text-4xl font-light text-white">{plan.price}</span>
-                        <span className="text-lg text-gray-400">{plan.period}</span>
-                      </div>
-                      <p className="text-gray-400">{plan.description}</p>
-                    </div>
-                  </div>
-
-                  {/* Features List */}
-                  <div className="space-y-3">
-                    <ul className="space-y-3">
-                      {plan.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-center space-x-3">
-                          <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
-                          <span className="text-gray-300">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* CTA Button */}
-                  <a 
-                    href={plan.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-hero-primary w-full group"
-                  >
-                    {plan.cta}
-                    <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>
